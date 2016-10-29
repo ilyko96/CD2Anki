@@ -83,13 +83,28 @@ namespace Parser
                     tp.UseVisualStyleBackColor = true;
                     tabControl1.TabPages.Add(tp);
 
-                    Panel pan = new Panel();
+                    //Panel pan = new Panel();
+                    //pan.Dock = DockStyle.Fill;
+                    ////pan.Location = new Point(3, 3);
+                    //pan.Name = "panel_" + tabControl1.TabCount;
+                    ////pan.Size = new Size(803, 463);
+                    ////pan.TabIndex = 0;
+                    //pan.AutoScroll = true;
+                    //tp.Controls.Add(pan);
+
+                    //FlowLayoutPanel pan = new FlowLayoutPanel();
+                    //pan.Dock = DockStyle.Fill;
+                    //pan.Name = "panel_" + tabControl1.TabCount;
+                    //pan.AutoScroll = true;
+                    //tp.Controls.Add(pan);
+
+                    TableLayoutPanel pan = new TableLayoutPanel();
                     pan.Dock = DockStyle.Fill;
-                    //pan.Location = new Point(3, 3);
                     pan.Name = "panel_" + tabControl1.TabCount;
-                    //pan.Size = new Size(803, 463);
-                    //pan.TabIndex = 0;
                     pan.AutoScroll = true;
+                    pan.ColumnCount = 1;
+                    pan.RowCount = 1;
+                    pan.MinimumSize = MinimumSize;
                     tp.Controls.Add(pan);
 
                     HtmlNodeCollection senseblocks = group.SelectNodes(".//div[@class='sense-block']");
@@ -110,6 +125,7 @@ namespace Parser
                             lbl_sense.BackColor = Color.DarkBlue;
                             lbl_sense.ForeColor = Color.White;
                             pan.Controls.Add(lbl_sense);
+                            pan.SetCellPosition(lbl_sense, new TableLayoutPanelCellPosition(0, pan.RowCount++ - 1));
 
                             last_block_y = lbl_sense.Location.Y + lbl_sense.Height + 5;
                         }
@@ -133,17 +149,46 @@ namespace Parser
                         lv_def.Name = "lv_" + tp.Text + "_" + tp.Controls.Count;
                         //lv_def.TabIndex = 3;
                         //lv_def.UseCompatibleStateImageBehavior = false;
+                        lv_def.Dock = DockStyle.Fill;
+
+                        ListViewGroup group_def = new ListViewGroup("");
+                        lv_def.Groups.Add(group_def);
 
                         foreach (HtmlNode def in defblocks)
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { def.SelectNodes(".//b[@class='def']")[0].InnerText });
+                            ListViewItem lvi = new ListViewItem(new string[] { def.SelectNodes(".//b[@class='def']")[0].InnerText }, group_def);
                             lv_def.Items.Add(lvi);
                             //lv_def.Items.Add(def.SelectNodes(".//b[@class='def']")[0].InnerText);
                         }
-                        lv_def.Size = new Size(pan.Width - SystemInformation.VerticalScrollBarWidth - 2, 30 + lv_def.Items.Count * 32);
-                        lv_def.Columns[0].Width = -2;
+
+                        HtmlNodeCollection phrblocks = senseblock.SelectNodes(".//div[@class='phrase-block pad-indent']");
+                        if (phrblocks != null && phrblocks.Count > 0)
+                        {
+                            foreach (HtmlNode phr in phrblocks)
+                            {
+                                ListViewGroup ng = new ListViewGroup(lv_def.Groups.Count.ToString(), phr.SelectNodes(".//span[@class='phrase-title']")[0].InnerText);
+                                lv_def.Groups.Add(ng);
+                                HtmlNodeCollection phrdefs = phr.SelectNodes(".//b[@class='def']");
+                                foreach (HtmlNode phrdef in phrdefs)
+                                {
+                                    ListViewItem lvi = new ListViewItem(new string[] { phrdef.InnerText }, ng);
+                                    lv_def.Items.Add(lvi);
+                                    //lv_def.Items.Add(def.SelectNodes(".//b[@class='def']")[0].InnerText);
+                                }
+                            }
+                        }
+
+
+                        lv_def.Height = 12 + (lv_def.Groups.Count + 1) * 27 + lv_def.Items.Count * 35;
+                        //lv_def.Size = new Size(pan.Width - 2 * SystemInformation.VerticalScrollBarWidth - 2, 12 + (lv_def.Groups.Count + 1) * 27 + lv_def.Items.Count * 35);
+                        lv_def.Columns[0].Width = -4;
+                        //lv_def.Columns[0].Width = pan.Width - 12;
                         //lv_def.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
                         pan.Controls.Add(lv_def);
+                        pan.SetCellPosition(lv_def, new TableLayoutPanelCellPosition(0, pan.RowCount++ - 1));
+
+
                         last_block_y = lv_def.Location.Y + lv_def.Height + 10;
                     }
                     //foreach (Control lv in pan.Controls)
@@ -159,6 +204,11 @@ namespace Parser
         private void process_err(string msg = null)
         {
             MessageBox.Show("Произошла ошибка" + (msg != null ? ": \""+msg+"\"!" : "!"));
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
