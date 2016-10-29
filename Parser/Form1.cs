@@ -25,6 +25,7 @@ namespace Parser
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -104,7 +105,7 @@ namespace Parser
                     pan.AutoScroll = true;
                     pan.ColumnCount = 1;
                     pan.RowCount = 1;
-                    pan.MinimumSize = MinimumSize;
+                    pan.MinimumSize = new Size(MinimumSize.Width - SystemInformation.VerticalScrollBarWidth - 12, MinimumSize.Height - tabControl1.Height - SystemInformation.HorizontalScrollBarHeight - 12);
                     tp.Controls.Add(pan);
 
                     HtmlNodeCollection senseblocks = group.SelectNodes(".//div[@class='sense-block']");
@@ -209,6 +210,15 @@ namespace Parser
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+        OpenFileDialog ofd = new OpenFileDialog();
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                (new frm_editor(ofd.FileName)).Show();
+            }
         }
     }
 }
