@@ -83,6 +83,15 @@ namespace Parser
                     tp.UseVisualStyleBackColor = true;
                     tabControl1.TabPages.Add(tp);
 
+                    Panel pan = new Panel();
+                    pan.Dock = DockStyle.Fill;
+                    //pan.Location = new Point(3, 3);
+                    pan.Name = "panel_" + tabControl1.TabCount;
+                    //pan.Size = new Size(803, 463);
+                    //pan.TabIndex = 0;
+                    pan.AutoScroll = true;
+                    tp.Controls.Add(pan);
+
                     HtmlNodeCollection senseblocks = group.SelectNodes(".//div[@class='sense-block']");
                     int last_block_y = 3;
                     foreach(HtmlNode senseblock in senseblocks)
@@ -90,17 +99,19 @@ namespace Parser
                         HtmlNodeCollection difdef = senseblock.SelectNodes(".//h4[@class='txt-block txt-block--alt2']");
                         if (difdef != null && difdef.Count > 0)
                         {
-                            Label sense_info = new Label();
-                            sense_info.AutoSize = true;
-                            sense_info.Location = new Point(6, last_block_y);
-                            sense_info.Name = "lbl_senseinfo_" + tp.Text + "_" + tabControl1.TabPages.Count;
-                            //sense_info.Size = new System.Drawing.Size(79, 29);
+                            Label lbl_sense = new Label();
+                            lbl_sense.AutoSize = true;
+                            lbl_sense.Location = new Point(0, last_block_y);
+                            lbl_sense.Name = "lbl_senseinfo_" + tp.Text + "_" + tabControl1.TabPages.Count;
+                            //lbl_sense.AutoSize = false;
+                            lbl_sense.Text = difdef[0].SelectNodes(".//span[@class='guideword']")[0].ChildNodes[1].InnerText;
+                            //lbl_sense.Width = pan.Width - SystemInformation.VerticalScrollBarWidth - 2;
                             //sense_info.TabIndex = 4;
-                            sense_info.Text = difdef[0].SelectNodes(".//span[@class='guideword']")[0].ChildNodes[1].InnerText;
-                            //sense_info.BackColor = Color.AliceBlue;
-                            tp.Controls.Add(sense_info);
+                            lbl_sense.BackColor = Color.DarkBlue;
+                            lbl_sense.ForeColor = Color.White;
+                            pan.Controls.Add(lbl_sense);
 
-                            last_block_y = sense_info.Location.Y + sense_info.Height;
+                            last_block_y = lbl_sense.Location.Y + lbl_sense.Height + 5;
                         }
                         
                         HtmlNodeCollection defblocks = senseblock.SelectNodes(".//div[@class='def-block pad-indent']");
@@ -111,33 +122,34 @@ namespace Parser
                         }
 
                         ListView lv_def = new ListView();
+                        lv_def.View = View.Details;
                         lv_def.Columns.Add(new ColumnHeader() );
-                        lv_def.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                         lv_def.FullRowSelect = true;
-                        lv_def.HeaderStyle = ColumnHeaderStyle.Clickable;
+                        lv_def.HeaderStyle = ColumnHeaderStyle.None;
+                        //lv_def.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        //lv_def.Columns[0].Width = tp.Width;
+                        //lv_def.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
                         lv_def.Location = new Point(0, last_block_y);
                         lv_def.Name = "lv_" + tp.Text + "_" + tp.Controls.Count;
-                        lv_def.Size = new Size(396, 479);
                         //lv_def.TabIndex = 3;
                         //lv_def.UseCompatibleStateImageBehavior = false;
-                        lv_def.View = View.Details;
 
                         foreach (HtmlNode def in defblocks)
                         {
-                            lv_def.Items.Add(def.SelectNodes(".//b[@class='def']")[0].InnerText);
+                            ListViewItem lvi = new ListViewItem(new string[] { def.SelectNodes(".//b[@class='def']")[0].InnerText });
+                            lv_def.Items.Add(lvi);
+                            //lv_def.Items.Add(def.SelectNodes(".//b[@class='def']")[0].InnerText);
                         }
-                        tp.Controls.Add(lv_def);
-                        last_block_y = lv_def.Location.Y + lv_def.Height;
+                        lv_def.Size = new Size(pan.Width - SystemInformation.VerticalScrollBarWidth - 2, 30 + lv_def.Items.Count * 32);
+                        lv_def.Columns[0].Width = -2;
+                        //lv_def.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                        pan.Controls.Add(lv_def);
+                        last_block_y = lv_def.Location.Y + lv_def.Height + 10;
                     }
-                    //if (!defs.Contains(link.InnerText.Replace(":", "")))
-                    //    defs.Add(link.InnerText.Replace(":", ""));
+                    //foreach (Control lv in pan.Controls)
+                    //    if (lv.GetType().Name == "ListView")
+                    //        lv.Width = pan.Width - SystemInformation.VerticalScrollBarWidth - 2;
                 }
-
-                //foreach (string elt in defs)
-                //    Console.WriteLine(elt);
-
-                listBox1.Items.Clear();
-                listBox1.Items.AddRange(defs.ToArray());
             }
             catch (Exception ex)
             {
