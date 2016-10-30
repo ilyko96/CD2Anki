@@ -66,6 +66,12 @@
     <Compile Include="frm_editor.Designer.cs">
       <DependentUpon>frm_editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="frm_preview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_preview.Designer.cs">
+      <DependentUpon>frm_preview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -73,6 +79,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frm_editor.resx">
       <DependentUpon>frm_editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_preview.resx">
+      <DependentUpon>frm_preview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

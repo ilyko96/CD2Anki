@@ -26,6 +26,7 @@ namespace Parser
         private void Form1_Load(object sender, EventArgs e)
         {
             ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+            textBox1.Focus();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -151,6 +152,7 @@ namespace Parser
                         //lv_def.TabIndex = 3;
                         //lv_def.UseCompatibleStateImageBehavior = false;
                         lv_def.Dock = DockStyle.Fill;
+                        lv_def.DoubleClick += Lv_def_DoubleClick;
 
                         ListViewGroup group_def = new ListViewGroup("");
                         lv_def.Groups.Add(group_def);
@@ -182,7 +184,7 @@ namespace Parser
 
                         lv_def.Height = 12 + (lv_def.Groups.Count + 1) * 27 + lv_def.Items.Count * 35;
                         //lv_def.Size = new Size(pan.Width - 2 * SystemInformation.VerticalScrollBarWidth - 2, 12 + (lv_def.Groups.Count + 1) * 27 + lv_def.Items.Count * 35);
-                        lv_def.Columns[0].Width = -4;
+                        lv_def.Columns[0].Width = -10;
                         //lv_def.Columns[0].Width = pan.Width - 12;
                         //lv_def.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
@@ -202,6 +204,15 @@ namespace Parser
                 process_err("This word was not found!");
             }
         }
+
+        private void Lv_def_DoubleClick(object sender, EventArgs e)
+        {
+            ListView lv = (ListView)sender;
+            if (lv.SelectedItems.Count == 0)
+                return;
+            new frm_preview(new string[] { textBox1.Text, lv.SelectedItems[0].Text }).Show();
+        }
+
         private void process_err(string msg = null)
         {
             MessageBox.Show("Произошла ошибка" + (msg != null ? ": \""+msg+"\"!" : "!"));
