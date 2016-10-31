@@ -82,5 +82,10 @@ namespace Parser
         {
             Close();
         }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", "/select, \"" + path + "\"");
+        }
     }
 }

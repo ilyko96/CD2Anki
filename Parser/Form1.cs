@@ -210,7 +210,7 @@ namespace Parser
             ListView lv = (ListView)sender;
             if (lv.SelectedItems.Count == 0)
                 return;
-            new frm_preview(new string[] { textBox1.Text, lv.SelectedItems[0].Text }).Show();
+            new frm_preview(new string[] { textBox1.Text, lv.SelectedItems[0].Text }, previewToolStripMenuItem.Checked, showTableToolStripMenuItem.Checked).Show();
         }
 
         private void process_err(string msg = null)
@@ -230,6 +230,20 @@ namespace Parser
             {
                 (new frm_editor(ofd.FileName)).Show();
             }
+        }
+
+        private void previewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            previewToolStripMenuItem.Checked = !previewToolStripMenuItem.Checked;
+            if (!previewToolStripMenuItem.Checked)
+                showTableToolStripMenuItem.Checked = false;
+        }
+
+        private void showTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showTableToolStripMenuItem.Checked = !showTableToolStripMenuItem.Checked;
+            if (showTableToolStripMenuItem.Checked)
+                previewToolStripMenuItem.Checked = true;
         }
     }
 }
