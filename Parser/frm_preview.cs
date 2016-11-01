@@ -41,6 +41,8 @@ namespace Parser
             if (to_close)
             {
                 Close();
+                if (open_editor)
+                    (new frm_editor(path)).Show();
                 return;
             }
             Visible = true;
